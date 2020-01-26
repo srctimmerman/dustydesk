@@ -1,5 +1,8 @@
 #include <vector>
 #include <random>
+#include<functional>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -24,24 +27,38 @@ int main() {
   //Create a 2d lattice to serve as a desk.  Each point of the lattice 
   vector<vector<int>> desk;
   //Populate the desk with one piece of dust on every lattice site
+  vector<int> v(width, 1);
   for(int i = 0; i < length; i++) {
-    for(int j = 0; j < width; j++) {
-      desk[i][j] = 1;
-    }
+    desk.push_back(v);
   }
+
+  cerr << "hi" << endl;
+
+  //Create a file to collect data throughout the simulation
+  ofstream output("average_dust_height.dat");
 
   //Cycles through each time step
   for(int t = 0; t < time; t++) {
 
+    double average_dust_height = 0.0;
+
     //Iterates through every lattice site on the desk
-    for(int i =0; i < length; i++) {
+    for(int i = 0; i < length; i++) {
       for(int j = 0; j < width; j++) {
 
-        
+        //Deposits dust on desk
+        if((t % deposit_rate) == 0) {
+          desk[i][j]++;
+        }
 
+        //Adds the amount of dust at this lattice site to a running total
+        average_dust_height += desk[i][j];
       }
     }
 
-  }
+    //Calculates the average amount of dust over each lattice site
+    average_dust_height = average_dust_height / (length * width);
+    output << average_dust_height << endl;
 
+  }
 }
